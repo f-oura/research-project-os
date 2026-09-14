@@ -1,0 +1,15 @@
+profile_id: PROJECT-000
+project_root: UNBOUND
+canonical:
+  entrypoint: README.md
+  agent_policy: AGENTS.md
+  plan: docs/project/plan.md
+  charter: docs/project/charter.md
+  current_state: docs/project/current-state.yaml
+  task_board: docs/project/task-board.yaml
+  handoffs: docs/project/handoffs
+  approvals: docs/project/approvals
+  validation: docs/validation
+  provenance: docs/provenance
+  logs: logs/topics
+  environments: manifests/environments.yaml

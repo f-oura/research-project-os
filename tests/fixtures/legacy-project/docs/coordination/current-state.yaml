@@ -1,0 +1,3 @@
+version: 1
+phase: IMPLEMENTATION
+next_action: Run the first compatibility check

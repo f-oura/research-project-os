@@ -45,3 +45,7 @@ An environment record should identify: stable environment ID, host identity, rep
 ## Uncertainty rules
 
 Use `UNBOUND` for values not tied to an authoritative document, measurement, or human decision. Keep `PROVISIONAL` separate from `CONFIRMED`. A newer file does not automatically supersede an older decision; record an explicit supersession or contradiction.
+
+## Existing project compatibility
+
+Existing projects may keep their established paths. Use a project profile to map roles such as `current_state`, `task_board`, `handoffs`, and `logs` to those paths. Audit first, report differences, and only migrate files when the mapping is insufficient.

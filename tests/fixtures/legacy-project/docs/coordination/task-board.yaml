@@ -1,0 +1,6 @@
+version: 1
+tasks:
+  - id: LEGACY-001
+    title: Compatibility check
+    status: READY
+    depends_on: []

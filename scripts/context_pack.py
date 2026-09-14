@@ -15,15 +15,43 @@ def read(path: Path, limit: int) -> str:
     return text[:limit] + ("\n[truncated]" if len(text) > limit else "")
 
 
+def load_profile(path: Path) -> dict[str, str]:
+    """Read the simple canonical mapping without requiring PyYAML."""
+    if not path.exists():
+        return {}
+    result: dict[str, str] = {}
+    in_canonical = False
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.strip() == "canonical:":
+            in_canonical = True
+            continue
+        if in_canonical and line and not line.startswith("  "):
+            break
+        if in_canonical:
+            match = re.match(r"^\s{2}([a-z_]+):\s*(\S+)\s*$", line)
+            if match:
+                result[match.group(1)] = match.group(2)
+    return result
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("path", type=Path, nargs="?", default=Path("."))
     parser.add_argument("--purpose", required=True)
     parser.add_argument("--task", help="task ID to include as the primary work item")
+    parser.add_argument("--profile", type=Path, help="project profile YAML for legacy/custom paths")
     parser.add_argument("--max-chars", type=int, default=24000)
     args = parser.parse_args()
     root = args.path.resolve()
-    board_text = read(root / "docs/project/task-board.yaml", 12000)
+    profile = load_profile(args.profile.resolve()) if args.profile else {}
+    def project_path(role: str, default: str) -> Path:
+        return root / profile.get(role, default)
+    board_path = project_path("task_board", "docs/project/task-board.yaml")
+    state_path = project_path("current_state", "docs/project/current-state.yaml")
+    charter_path = project_path("charter", "docs/project/charter.md")
+    logs_path = project_path("logs", "logs/topics")
+    env_path = project_path("environments", "manifests/environments.yaml")
+    board_text = read(board_path, 12000)
     if args.task:
         blocks = re.split(r"(?m)(?=^\s*- id:\s*)", board_text)
         selected = next((block for block in blocks if re.search(rf"^\s*- id:\s*{re.escape(args.task)}\s*$", block, re.M)), None)
@@ -34,9 +62,9 @@ def main() -> int:
         task_heading = "## Task board\n\n" + board_text
     sections = [
         f"# Context Pack\n\nGenerated: {date.today().isoformat()}\nPurpose: {args.purpose}\n",
-        "## Charter\n\n" + read(root / "docs/project/charter.md", 5000),
-        "## Current state\n\n" + read(root / "docs/project/current-state.yaml", 6000),
-        "## Execution environments\n\n" + read(root / "manifests/environments.yaml", 5000),
+        "## Charter\n\n" + read(charter_path, 5000),
+        "## Current state\n\n" + read(state_path, 6000),
+        "## Execution environments\n\n" + read(env_path, 5000),
         task_heading,
     ]
     if args.task:
@@ -49,7 +77,7 @@ def main() -> int:
         decisions = root / "docs/project/decisions"
         for path in sorted(decisions.glob("*.md")):
             sections.append(f"## Decision: {path.name}\n\n" + read(path, 2500))
-    for path in sorted((root / "logs/topics").glob("*.md"))[-5:]:
+    for path in sorted(logs_path.glob("*.md"))[-5:]:
         sections.append(f"## Topic log: {path.name}\n\n" + read(path, 1800))
     output = "\n\n".join(sections)
     if len(output) > args.max_chars:
