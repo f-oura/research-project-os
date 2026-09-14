@@ -61,6 +61,25 @@ def main() -> int:
         for key in ("execution_id:", "task_id:", "environment_id:", "source_commit:"):
             if key not in text:
                 errors.append(f"execution missing {key}: {path.relative_to(root)}")
+    environment_manifest = root / "manifests/environments.yaml"
+    environment_text = environment_manifest.read_text(encoding="utf-8") if environment_manifest.exists() else ""
+    environment_ids = set(re.findall(r"(?m)^\s*- environment_id:\s*([^\s#]+)", environment_text))
+    execution_ids: set[str] = set()
+    for path in (root / "docs/validation/executions").glob("*.yaml"):
+        if path.name.startswith("_") or "template" in path.name:
+            continue
+        text = path.read_text(encoding="utf-8")
+        execution_id = re.search(r"(?m)^execution_id:\s*([^\s#]+)", text)
+        task_id = re.search(r"(?m)^task_id:\s*([^\s#]+)", text)
+        environment_id = re.search(r"(?m)^environment_id:\s*([^\s#]+)", text)
+        if execution_id:
+            if execution_id.group(1) in execution_ids:
+                errors.append(f"duplicate execution id: {execution_id.group(1)}")
+            execution_ids.add(execution_id.group(1))
+        if task_id and task_id.group(1) not in known_ids:
+            errors.append(f"execution references unknown task: {task_id.group(1)}")
+        if environment_id and environment_id.group(1) not in environment_ids:
+            errors.append(f"execution references unknown environment: {environment_id.group(1)}")
     for path in (root / "logs/topics").glob("*.md"):
         if "template" in path.name:
             continue
