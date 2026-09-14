@@ -28,6 +28,7 @@ Use this skill to make a research project reconstructable by a human or a new AI
 5. Add source and version records before relying on external code, data, hardware, or literature.
 6. Register relevant execution environments and roles when the project spans local and remote machines.
 7. For an existing project, run `scripts/audit_project.py` first and use a project profile for legacy paths instead of moving files prematurely.
+8. Register each execution environment with `scripts/register_environment.py`; do not infer host, tool, or data access facts.
 
 ## When continuing a project
 

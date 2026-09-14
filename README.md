@@ -10,6 +10,7 @@ It keeps the project purpose, current state, tasks, decisions, provenance, valid
 - `scripts/bootstrap_project.py`: create a new project skeleton
 - `scripts/validate_project.py`: check project invariants
 - `scripts/context_pack.py`: build a purpose-limited agent context pack
+- `scripts/register_environment.py`: register local/remote execution environments
 - `templates/`: decision, evidence, handoff, source, artifact, environment, execution, and failure records
 - `profiles/`: compatibility mappings for existing project layouts
 - `references/`: schema, workflow, and design philosophy
@@ -23,6 +24,17 @@ python3 scripts/bootstrap_project.py /path/to/project \\
   --kind analysis
 
 python3 scripts/validate_project.py /path/to/project
+
+python3 scripts/register_environment.py /path/to/project \\
+  --id analysis-server-01 \\
+  --name "Analysis server" \\
+  --kind remote \\
+  --host HOST_ID \\
+  --repository /path/to/project \\
+  --workdir /path/to/project \\
+  --capability Python \\
+  --restriction no-hardware-programming \\
+  --tool Python=UNBOUND
 
 python3 scripts/context_pack.py /path/to/project \\
   --task PLAN-001 \\
