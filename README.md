@@ -11,6 +11,7 @@ It keeps the project purpose, current state, tasks, decisions, provenance, valid
 - `scripts/validate_project.py`: check project invariants
 - `scripts/context_pack.py`: build a purpose-limited agent context pack
 - `templates/`: decision, evidence, handoff, source, artifact, environment, execution, and failure records
+- `profiles/`: compatibility mappings for existing project layouts
 - `references/`: schema, workflow, and design philosophy
 
 ## Quick start
@@ -26,6 +27,16 @@ python3 scripts/validate_project.py /path/to/project
 python3 scripts/context_pack.py /path/to/project \\
   --task PLAN-001 \\
   --purpose "initial agent briefing"
+```
+
+For an existing project with custom paths, run the audit first and pass a profile:
+
+```bash
+python3 scripts/audit_project.py /path/to/existing-project
+python3 scripts/context_pack.py /path/to/existing-project \\
+  --profile profiles/amaneq-receiver.yaml \\
+  --task TASK-001 \\
+  --purpose "compatibility pilot"
 ```
 
 ## Design boundary

@@ -1,0 +1,16 @@
+# Read-only compatibility profile for the pilot repository.
+profile_id: amaneq-receiver
+project_root: UNBOUND
+canonical:
+  entrypoint: README.md
+  agent_policy: AGENTS.md
+  plan: docs/project/amaneq-receiver-development-plan.md
+  charter: README.md
+  current_state: docs/coordination/current-state.yaml
+  task_board: docs/coordination/task-board.yaml
+  handoffs: docs/coordination/handoffs
+  approvals: docs/coordination/approvals
+  validation: docs/validation
+  provenance: docs/provenance
+  logs: logs/topics
+  environments: manifests/environments.yaml
