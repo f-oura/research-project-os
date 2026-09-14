@@ -32,7 +32,11 @@ def main() -> int:
     parser.add_argument("path", type=Path)
     parser.add_argument("--name", required=True)
     parser.add_argument("--title", required=True)
-    parser.add_argument("--kind", default="research", choices=["research", "analysis", "detector", "daq-firmware", "simulation", "paper"])
+    parser.add_argument(
+        "--kind",
+        default="research",
+        choices=["research", "analysis", "calculation", "detector", "daq-firmware", "simulation", "paper"],
+    )
     parser.add_argument("--owner", default="UNBOUND")
     args = parser.parse_args()
 

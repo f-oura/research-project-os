@@ -24,6 +24,18 @@ docs/validation/executions/           task execution records
 tests/                               reproducible checks and reference vectors
 ```
 
+## Project kinds
+
+The bootstrap script accepts the following controlled vocabulary for `project.yaml:kind`:
+
+- `research`: general research project
+- `analysis`: analysis of existing data or measurements
+- `calculation`: analytical or numerical theory calculation
+- `detector`: detector development
+- `daq-firmware`: DAQ or firmware development
+- `simulation`: executable simulation or Monte Carlo workflow
+- `paper`: paper-focused project
+
 ## Task minimum
 
 Every task should define: `id`, `title`, `owner_role`, `status`, `depends_on`, `scope.in`, `scope.out`, `completion_evidence`, and `human_approval_required` when relevant.

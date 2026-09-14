@@ -4,6 +4,8 @@ Research Project OS is a lightweight, Git-managed operating model for research p
 
 It keeps the project purpose, current state, tasks, decisions, provenance, validation evidence, logs, handoffs, and execution environments in human-readable Markdown/YAML. Raw experimental data, credentials, and generated build artifacts remain outside ordinary Git history.
 
+`--kind` supports `research`, `analysis`, `calculation`, `detector`, `daq-firmware`, `simulation`, and `paper`. Use `calculation` for analytical or numerical theory work; reserve `simulation` for executable simulations or Monte Carlo workflows.
+
 ## Included
 
 - `SKILL.md`: operating instructions for Codex/agent collaboration
