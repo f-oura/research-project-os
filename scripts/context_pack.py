@@ -79,6 +79,9 @@ def main() -> int:
             sections.append(f"## Decision: {path.name}\n\n" + read(path, 2500))
     for path in sorted(logs_path.glob("*.md"))[-5:]:
         sections.append(f"## Topic log: {path.name}\n\n" + read(path, 1800))
+    if args.task:
+        priority = ("## Target task:", "## Current state", "## Execution environments", "## Charter", "## Referenced record:", "## Topic log:")
+        sections.sort(key=lambda section: next((index for index, prefix in enumerate(priority) if section.startswith(prefix)), len(priority)))
     output = "\n\n".join(sections)
     if len(output) > args.max_chars:
         output = output[: args.max_chars] + "\n\n[pack truncated; consult canonical records before acting]"
