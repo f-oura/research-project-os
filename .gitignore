@@ -1,0 +1,33 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Generated context and local execution material
+generated/
+context-packs/
+logs/_raw/
+logs/_artifacts/
+docs/validation/_artifacts/
+
+# Local secrets and machine-specific configuration
+.env
+.env.*
+*.key
+*.pem
+*.token
+local-config.*
+
+# Large experimental and build artifacts
+*.root
+*.h5
+*.hdf5
+*.npy
+*.npz
+*.parquet
+*.bit
+*.bin
+*.mcs
+vivado-*/
+build/
+dist/

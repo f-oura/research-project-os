@@ -1,0 +1,15 @@
+handoff_id: HND-000
+task_id: TASK-000
+from_role: UNBOUND
+to_role: UNBOUND
+status: draft
+source_commit: UNBOUND
+scope_in: []
+scope_out: []
+changed_objects: []
+validation_refs: []
+evidence_refs: []
+open_questions: []
+approval_needed: []
+acceptance_criteria: []
+one_next_action: UNBOUND

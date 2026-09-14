@@ -1,0 +1,10 @@
+artifact_id: ART-000
+produced_by_task: TASK-000
+status: candidate
+locator: UNBOUND
+content_hash: UNBOUND
+input_sources: []
+tool_versions: {}
+target_identity: {}
+evidence_refs: []
+limitations: []

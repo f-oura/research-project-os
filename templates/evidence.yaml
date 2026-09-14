@@ -1,0 +1,14 @@
+evidence_id: EVD-000
+task_id: TASK-000
+claim: UNBOUND
+stage: simulation
+method: UNBOUND
+input_versions: []
+expected: UNBOUND
+observed: UNBOUND
+verdict: INCONCLUSIVE
+artifact_refs: []
+limitations: []
+review_state: draft
+reviewed_by: UNBOUND
+created: YYYY-MM-DD

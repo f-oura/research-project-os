@@ -1,0 +1,12 @@
+environment_id: ENV-000
+name: UNBOUND
+kind: local | remote | container | cluster
+host_identity: UNBOUND
+repository_locator: UNBOUND
+working_directory: UNBOUND
+tool_versions: {}
+capabilities: []
+restrictions: []
+data_mounts: []
+verified_at: UNBOUND
+verified_by: UNBOUND

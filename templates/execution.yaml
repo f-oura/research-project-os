@@ -1,0 +1,13 @@
+execution_id: EXE-000
+task_id: TASK-000
+environment_id: ENV-000
+role: UNBOUND
+source_commit: UNBOUND
+started_at: UNBOUND
+finished_at: UNBOUND
+commands_or_procedure: []
+input_versions: []
+outputs: []
+validation_refs: []
+status: planned
+notes: UNBOUND

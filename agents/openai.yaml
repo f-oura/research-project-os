@@ -1,0 +1,4 @@
+interface:
+  display_name: "Research Project OS"
+  short_description: "Bootstrap and run agent-ready research projects"
+  default_prompt: "Use $research-project-os to initialize or organize this research project, preserving evidence, provenance, validation stages, and human approval gates."
