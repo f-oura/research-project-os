@@ -10,6 +10,7 @@ It keeps the project purpose, current state, tasks, decisions, provenance, valid
 
 - `SKILL.md`: operating instructions for Codex/agent collaboration
 - `scripts/bootstrap_project.py`: create a new project skeleton
+- `templates/agent-instructions.md`: generated `AGENTS.md` for the project execution agent
 - `scripts/validate_project.py`: check project invariants
 - `scripts/context_pack.py`: build a purpose-limited agent context pack
 - `scripts/register_environment.py`: register local/remote execution environments
