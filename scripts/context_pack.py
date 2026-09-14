@@ -51,6 +51,7 @@ def main() -> int:
     charter_path = project_path("charter", "docs/project/charter.md")
     logs_path = project_path("logs", "logs/topics")
     env_path = project_path("environments", "manifests/environments.yaml")
+    executions_path = project_path("executions", "docs/validation/executions")
     board_text = read(board_path, 12000)
     if args.task:
         blocks = re.split(r"(?m)(?=^\s*- id:\s*)", board_text)
@@ -68,6 +69,12 @@ def main() -> int:
         task_heading,
     ]
     if args.task:
+        for path in sorted(executions_path.glob("*.yaml")):
+            if path.name.startswith("_") or "template" in path.name:
+                continue
+            execution_text = path.read_text(encoding="utf-8", errors="replace")
+            if re.search(rf"(?m)^task_id:\s*{re.escape(args.task)}\s*$", execution_text):
+                sections.append(f"## Execution record: {path.name}\n\n" + read(path, 3000))
         referenced = re.findall(r"(?:docs|logs|manifests|tests|src|software|firmware)/[^\s,\])]+", task_text)
         for relative in dict.fromkeys(referenced):
             candidate = root / relative.rstrip(".")
@@ -77,10 +84,11 @@ def main() -> int:
         decisions = root / "docs/project/decisions"
         for path in sorted(decisions.glob("*.md")):
             sections.append(f"## Decision: {path.name}\n\n" + read(path, 2500))
-    for path in sorted(logs_path.glob("*.md"))[-5:]:
+    log_files = [path for path in sorted(logs_path.glob("*.md")) if "template" not in path.name]
+    for path in log_files[-5:]:
         sections.append(f"## Topic log: {path.name}\n\n" + read(path, 1800))
     if args.task:
-        priority = ("## Target task:", "## Current state", "## Execution environments", "## Charter", "## Referenced record:", "## Topic log:")
+        priority = ("## Target task:", "## Current state", "## Execution environments", "## Execution record:", "## Charter", "## Referenced record:", "## Topic log:")
         sections.sort(key=lambda section: next((index for index, prefix in enumerate(priority) if section.startswith(prefix)), len(priority)))
     output = "\n\n".join(sections)
     if len(output) > args.max_chars:

@@ -42,6 +42,8 @@ Every decision should identify: the decision question, selected option, rejected
 
 An environment record should identify: stable environment ID, host identity, repository locator, working directory, tool versions, capabilities, restrictions, data mounts, and verification date. An execution record binds a Task to an environment, role, source commit, procedure, inputs, outputs, and validation evidence.
 
+Create execution records with `scripts/record_execution.py`. The command verifies that the Task and environment are registered, but it does not change Task status; review and completion remain explicit.
+
 ## Uncertainty rules
 
 Use `UNBOUND` for values not tied to an authoritative document, measurement, or human decision. Keep `PROVISIONAL` separate from `CONFIRMED`. A newer file does not automatically supersede an older decision; record an explicit supersession or contradiction.

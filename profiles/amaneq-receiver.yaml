@@ -14,3 +14,4 @@ canonical:
   provenance: docs/provenance
   logs: logs/topics
   environments: manifests/environments.yaml
+  executions: docs/validation/executions
