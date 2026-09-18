@@ -6,32 +6,23 @@ import argparse
 from datetime import date
 from pathlib import Path
 import re
+import subprocess
+
+from record_utils import git_revision, load_profile, referenced_values, resolve_path, task_blocks
 
 
 def read(path: Path, limit: int) -> str:
     if not path.exists():
         return f"[missing: {path}]"
     text = path.read_text(encoding="utf-8")
+    if re.search(r"(?im)^\s*(access|classification):\s*restricted\s*$", text):
+        return "[excluded: restricted record]"
+    text = re.sub(
+        r"(?im)^(\s*(?:password|token|secret|private_key|credential|api_key)\s*:\s*).*$",
+        r"\1[REDACTED]",
+        text,
+    )
     return text[:limit] + ("\n[truncated]" if len(text) > limit else "")
-
-
-def load_profile(path: Path) -> dict[str, str]:
-    """Read the simple canonical mapping without requiring PyYAML."""
-    if not path.exists():
-        return {}
-    result: dict[str, str] = {}
-    in_canonical = False
-    for line in path.read_text(encoding="utf-8").splitlines():
-        if line.strip() == "canonical:":
-            in_canonical = True
-            continue
-        if in_canonical and line and not line.startswith("  "):
-            break
-        if in_canonical:
-            match = re.match(r"^\s{2}([a-z_]+):\s*(\S+)\s*$", line)
-            if match:
-                result[match.group(1)] = match.group(2)
-    return result
 
 
 def main() -> int:
@@ -41,30 +32,42 @@ def main() -> int:
     parser.add_argument("--task", help="task ID to include as the primary work item")
     parser.add_argument("--profile", type=Path, help="project profile YAML for legacy/custom paths")
     parser.add_argument("--max-chars", type=int, default=24000)
+    parser.add_argument("--max-task-chars", type=int, default=10000)
     args = parser.parse_args()
     root = args.path.resolve()
     profile = load_profile(args.profile.resolve()) if args.profile else {}
     def project_path(role: str, default: str) -> Path:
-        return root / profile.get(role, default)
+        return resolve_path(root, profile, role, default)
     board_path = project_path("task_board", "docs/project/task-board.yaml")
     state_path = project_path("current_state", "docs/project/current-state.yaml")
     charter_path = project_path("charter", "docs/project/charter.md")
     logs_path = project_path("logs", "logs/topics")
     env_path = project_path("environments", "manifests/environments.yaml")
     executions_path = project_path("executions", "docs/validation/executions")
-    board_text = read(board_path, 12000)
+    board_text = read(board_path, 1_000_000)
+    project_commit = git_revision(root)
+    tool_commit = git_revision(Path(__file__).resolve().parents[1])
     if args.task:
-        blocks = re.split(r"(?m)(?=^\s*- id:\s*)", board_text)
-        selected = next((block for block in blocks if re.search(rf"^\s*- id:\s*{re.escape(args.task)}\s*$", block, re.M)), None)
-        task_text = selected or f"[task not found: {args.task}]"
+        selected = next((block for task_id, block in task_blocks(board_text) if task_id == args.task), None)
+        if selected is None:
+            parser.error(f"task is not registered: {args.task}")
+        task_text = selected
+        if len(task_text) > args.max_task_chars:
+            task_text = task_text[: args.max_task_chars] + "\n[task block truncated]"
         task_heading = f"## Target task: {args.task}\n\n{task_text}"
+        refs = referenced_values(selected)
+        reference_lines = ["## Task references"]
+        for key, values in refs.items():
+            reference_lines.append(f"- {key}: {', '.join(values) if values else '[]'}")
+        if len(reference_lines) > 1:
+            task_heading += "\n\n" + "\n".join(reference_lines)
     else:
         task_text = board_text
         task_heading = "## Task board\n\n" + board_text
     sections = [
-        f"# Context Pack\n\nGenerated: {date.today().isoformat()}\nPurpose: {args.purpose}\n",
+        f"# Context Pack\n\nGenerated: {date.today().isoformat()}\nPurpose: {args.purpose}\nProject source commit: {project_commit}\nTool revision: {tool_commit}\nSource task board: {board_path.relative_to(root)}\nRedaction policy: credentials and restricted records are excluded or redacted.\n",
         "## Charter\n\n" + read(charter_path, 5000),
-        "## Current state\n\n" + read(state_path, 6000),
+        "## Current state\n\n" + read(state_path, 12000),
         "## Execution environments\n\n" + read(env_path, 5000),
         task_heading,
     ]

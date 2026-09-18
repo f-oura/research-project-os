@@ -7,6 +7,8 @@ import json
 import re
 from pathlib import Path
 
+from record_utils import load_profile, resolve_path
+
 ROLE_CANDIDATES = {
     "entrypoint": ["README.md", "README.rst"],
     "agent_policy": ["AGENTS.md", "CONTRIBUTING.md"],
@@ -43,11 +45,20 @@ def extract_value(path: Path, key: str) -> str | None:
     return " ".join(parts) or value
 
 
-def audit(root: Path) -> dict:
+def audit(root: Path, profile_path: Path | None = None) -> dict:
+    profile = load_profile(profile_path.resolve()) if profile_path else {}
     records: dict[str, str | None] = {}
     warnings: list[str] = []
     for role, candidates in ROLE_CANDIDATES.items():
-        found = next((item for item in candidates if (root / item).exists()), None)
+        if role in profile:
+            try:
+                mapped = resolve_path(root, profile, role, candidates[0])
+                found = str(mapped.relative_to(root)) if mapped.exists() else None
+            except ValueError as exc:
+                found = None
+                warnings.append(str(exc))
+        else:
+            found = next((item for item in candidates if (root / item).exists()), None)
         records[role] = found
         if found is None:
             warnings.append(f"missing: {role}")
@@ -75,8 +86,9 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("path", type=Path)
     parser.add_argument("--format", choices=["text", "json"], default="text")
+    parser.add_argument("--profile", type=Path, help="compatibility profile with canonical role mappings")
     args = parser.parse_args()
-    result = audit(args.path.resolve())
+    result = audit(args.path.resolve(), args.profile)
     if args.format == "json":
         print(json.dumps(result, indent=2, ensure_ascii=False))
     else:

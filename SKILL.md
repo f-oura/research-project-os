@@ -28,8 +28,9 @@ Use this skill to make a research project reconstructable by a human or a new AI
 5. Add source and version records before relying on external code, data, hardware, or literature.
 6. Register relevant execution environments and roles when the project spans local and remote machines.
 7. For an existing project, run `scripts/audit_project.py` first and use a project profile for legacy paths instead of moving files prematurely.
-8. Register each execution environment with `scripts/register_environment.py`; do not infer host, tool, or data access facts.
-9. Record completed or planned runs with `scripts/record_execution.py`; keep Task completion and execution recording as separate review steps.
+8. For a profiled project, pass the same profile to `scripts/validate_project.py`; do not duplicate canonical records just to satisfy the standard layout.
+9. Register each execution environment with `scripts/register_environment.py`; do not infer host, tool, or data access facts.
+10. Record completed or planned runs with `scripts/record_execution.py`; keep Task completion and execution recording as separate review steps.
 
 ## When continuing a project
 
@@ -38,6 +39,7 @@ Use this skill to make a research project reconstructable by a human or a new AI
 3. Make the smallest reviewable change, run the narrowest applicable validation first, and record expected versus observed behavior.
 4. Update task status, evidence, current state, and handoff in the same change when the project state changes.
 5. Run `scripts/validate_project.py` before reporting completion. If context is needed for an agent, generate a purpose-limited pack with `scripts/context_pack.py`.
+6. Context packs fail closed for unknown Task IDs and record their source project commit and Project OS tool revision.
 
 ## References
 

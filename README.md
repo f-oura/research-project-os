@@ -29,6 +29,10 @@ python3 scripts/bootstrap_project.py /path/to/project \\
 
 python3 scripts/validate_project.py /path/to/project
 
+# For an existing repository with mapped or legacy paths:
+python3 scripts/validate_project.py /path/to/project \\
+  --profile profiles/amaneq-receiver.yaml
+
 python3 scripts/register_environment.py /path/to/project \\
   --id analysis-server-01 \\
   --name "Analysis server" \\
@@ -52,6 +56,8 @@ python3 scripts/record_execution.py /path/to/project \\
 python3 scripts/context_pack.py /path/to/project \\
   --task PLAN-001 \\
   --purpose "initial agent briefing"
+
+python3 -m unittest discover -s tests -v
 ```
 
 For an existing project with custom paths, run the audit first and pass a profile:

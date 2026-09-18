@@ -63,3 +63,11 @@ Use `UNBOUND` for values not tied to an authoritative document, measurement, or 
 ## Existing project compatibility
 
 Existing projects may keep their established paths. Use a project profile to map roles such as `current_state`, `task_board`, `handoffs`, and `logs` to those paths. Audit first, report differences, and only migrate files when the mapping is insufficient.
+
+Classify records during a staged migration:
+
+- `native`: follows the Research Project OS schema directly;
+- `mapped`: an explicit profile maps the existing record to the role;
+- `legacy`: human-readable but only partially machine-validated.
+
+Do not create a second copy of a `mapped` record. Profile-aware validation may report a `legacy` schema warning without treating it as a reason to rewrite the existing record.
