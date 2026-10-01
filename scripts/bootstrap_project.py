@@ -4,6 +4,9 @@ from __future__ import annotations
 
 import argparse
 import re
+import json
+
+from plotting import MARKER, git, install
 from datetime import date
 from pathlib import Path
 
@@ -38,10 +41,26 @@ def main() -> int:
         choices=["research", "analysis", "calculation", "detector", "daq-firmware", "simulation", "paper"],
     )
     parser.add_argument("--owner", default="UNBOUND")
+    parser.add_argument("--without-plotting", action="store_true", help="create records only; skip Git/submodule integration")
+    parser.add_argument("--plot-revision", help="full pinned custom-plot SHA; default: bundled pin")
     args = parser.parse_args()
 
     root = args.path.resolve()
     root.mkdir(parents=True, exist_ok=True)
+    revision = None
+    integration_root = root
+    if not args.without_plotting:
+        revision = args.plot_revision or json.loads((Path(__file__).resolve().parents[1] / "config/plotting.json").read_text())["revision"]
+        if not re.fullmatch(r"[0-9a-f]{40}", revision):
+            parser.error("custom-plot requires a full pinned SHA")
+        try:
+            git_root = Path(git(root, "rev-parse", "--show-toplevel")).resolve()
+        except ValueError:
+            if any(root.iterdir()):
+                parser.error("existing non-Git target: initialize Git explicitly or use --without-plotting")
+            git(root, "init")
+            git_root = root
+        integration_root = git_root
     today = date.today().isoformat()
     project_id = slug(args.name)
     files = {
@@ -76,6 +95,19 @@ def main() -> int:
     copy_template(root, skill_root, "failure.md", "logs/topics/failure-template.md")
     copy_template(root, skill_root, "environment.yaml", "docs/coordination/nodes/_template.yaml")
     copy_template(root, skill_root, "execution.yaml", "docs/validation/executions/_template.yaml")
+    if revision:
+        try:
+            result = install(integration_root, revision)
+            if result["status"] != "PASS":
+                parser.error("; ".join(result["issues"]))
+            if integration_root != root:
+                policy = root / "AGENTS.md"
+                text = policy.read_text()
+                if MARKER not in text:
+                    text += "\n" + MARKER + "\n## Research figures\n\nResolve plotting from the containing Git repository root. Read `.agents/skills/research-plot/SKILL.md` there; its pinned dependency and manifest are shared with this nested project. Preserve this project's calculation and provenance conventions.\n"
+                    policy.write_text(text)
+        except ValueError as exc:
+            parser.error(str(exc))
     print(f"Initialized {project_id} at {root}")
     return 0
 

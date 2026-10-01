@@ -7,6 +7,7 @@ import json
 import re
 from pathlib import Path
 
+from plotting import inspect as inspect_plotting
 from record_utils import load_profile, resolve_path
 
 ROLE_CANDIDATES = {
@@ -78,8 +79,10 @@ def audit(root: Path, profile_path: Path | None = None) -> dict:
         "task_statuses": sorted(set(statuses)),
     }
     standard = {"current_state": "docs/project/current-state.yaml", "task_board": "docs/project/task-board.yaml", "environments": "manifests/environments.yaml"}
+    plotting = inspect_plotting(root, profile)
+    warnings.extend(plotting["issues"])
     compatibility = "PASS" if not warnings else "PARTIAL"
-    return {"project_root": str(root), "compatibility": compatibility, "records": records, "summary": summary, "warnings": warnings, "standard_paths": standard}
+    return {"project_root": str(root), "compatibility": compatibility, "records": records, "summary": summary, "warnings": warnings, "standard_paths": standard, "plotting": plotting}
 
 
 def main() -> int:

@@ -73,3 +73,33 @@ python3 scripts/context_pack.py /path/to/existing-project \\
 ## Design boundary
 
 This repository manages one research project at a time. A future Portfolio OS may manage priorities across multiple projects, but is intentionally outside the current scope.
+
+## Shared plotting
+
+New scaffolds include the bundled full-SHA pin from `config/plotting.json` at
+`vendor/custom-plot` and a discoverable `.agents/skills/research-plot/SKILL.md`
+that reads the canonical submodule skill. Bootstrap initializes Git only for a
+new empty target; existing non-Git targets require explicit initialization or
+`--without-plotting`. Nested projects use one plotting integration at the containing
+Git repository root and refer to its skill; they do not create another submodule. The dependency is cloned when bootstrapping, so GitHub
+access is needed. A missing dependency fails with a clear error; no Python
+environment is installed.
+
+```bash
+# Add to an existing Git project without moving its records:
+python3 scripts/install_plotting.py PROJECT --profile PROFILE
+# Read-only runtime check with an existing Python 3.10+ interpreter:
+python3 scripts/install_plotting.py PROJECT --check --python /path/to/python
+# Initialize the committed pin after a non-recursive clone:
+git submodule update --init -- vendor/custom-plot
+```
+
+Profiles can map `plot_dependency`, `plot_skill`, and `plot_manifest` alongside
+the existing canonical roles. This changes the dependency location rather than
+creating duplicate project records. The installer refuses occupied destinations
+and dirty `.gitmodules`; an identical integration is idempotent. It stages only
+`.gitmodules` and the gitlink; review and commit the skill, manifest, and AGENTS
+change together before using it as a durable project revision. Do not use
+`submodule update --remote` in routine figure production. To adopt a new version,
+review the source, update the gitlink and manifest revision together, and rerun
+the check. Existing calculation and figure provenance conventions still apply.

@@ -21,16 +21,17 @@ Use this skill to make a research project reconstructable by a human or a new AI
 
 ## When starting a project
 
-1. Run `scripts/bootstrap_project.py` to create the standard structure.
+1. Run `scripts/bootstrap_project.py` to create the standard structure and the pinned custom-plot submodule plus discoverable research-plot skill. A new empty target becomes a Git repository. Use `--without-plotting` only for a records-only scaffold. Check the existing plotting interpreter with `scripts/install_plotting.py PROJECT --check --python PYTHON`; report missing dependencies without installing an environment.
 2. Fill `docs/project/charter.md` with one decision-changing research or engineering question, competing explanations, observable/discriminator, scope, and completion criteria.
 3. Replace placeholders in `current-state.yaml` and `task-board.yaml`; keep unknown values as `UNBOUND`.
 4. Define dependency-ordered work packages. Every task must have an owner, inputs, output artifact, validation, gate, and failure response.
 5. Add source and version records before relying on external code, data, hardware, or literature.
 6. Register relevant execution environments and roles when the project spans local and remote machines.
 7. For an existing project, run `scripts/audit_project.py` first and use a project profile for legacy paths instead of moving files prematurely.
-8. For a profiled project, pass the same profile to `scripts/validate_project.py`; do not duplicate canonical records just to satisfy the standard layout.
-9. Register each execution environment with `scripts/register_environment.py`; do not infer host, tool, or data access facts.
-10. Record completed or planned runs with `scripts/record_execution.py`; keep Task completion and execution recording as separate review steps.
+8. Add plotting to an existing Git project with `scripts/install_plotting.py PROJECT --profile PROFILE` after reviewing the read-only audit. Map `plot_dependency`, `plot_skill`, and `plot_manifest` in the same canonical profile when needed; preserve native/mapped/legacy asset classifications and source-of-truth records.
+9. For a profiled project, pass the same profile to `scripts/validate_project.py`; do not duplicate canonical records just to satisfy the standard layout.
+10. Register each execution environment with `scripts/register_environment.py`; do not infer host, tool, or data access facts.
+11. Record completed or planned runs with `scripts/record_execution.py`; keep Task completion and execution recording as separate review steps.
 
 ## When continuing a project
 

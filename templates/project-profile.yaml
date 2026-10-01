@@ -14,3 +14,6 @@ canonical:
   logs: logs/topics
   environments: manifests/environments.yaml
   executions: docs/validation/executions
+  plot_dependency: vendor/custom-plot
+  plot_skill: .agents/skills/research-plot/SKILL.md
+  plot_manifest: manifests/plotting.json
