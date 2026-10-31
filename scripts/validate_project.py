@@ -6,9 +6,8 @@ import argparse
 import re
 from pathlib import Path
 
-from record_utils import load_profile, resolve_path
+from record_utils import load_profile, resolve_path, load_yaml, parse_tasks
 
-REQUIRED = ["README.md", "AGENTS.md", "project.yaml", "docs/project/charter.md", "docs/project/current-state.yaml", "docs/project/task-board.yaml", "docs/provenance", "docs/validation", "docs/validation/executions", "docs/coordination/nodes", "docs/coordination/roles", "manifests/environments.yaml", "logs", "logs/topics"]
 
 
 def main() -> int:
@@ -37,9 +36,10 @@ def main() -> int:
         "logs/topics": ("logs", "logs/topics"),
     }
     if args.profile:
+        # Custom layouts may omit optional roles, never the state and work queue.
         mapped_required = {
             label: mapping for label, mapping in mapped_required.items()
-            if mapping[0] in profile
+            if mapping[0] in profile or mapping[0] in {"current_state", "task_board"}
         }
     else:
         mapped_required["project.yaml"] = ("project", "project.yaml")
@@ -49,73 +49,91 @@ def main() -> int:
         except ValueError as exc:
             errors.append(str(exc))
             continue
-        if not candidate.exists():
+        directory_roles = {"provenance", "validation", "executions", "nodes", "roles", "logs_root", "logs"}
+        if not (candidate.is_dir() if role in directory_roles else candidate.is_file()):
             errors.append(f"missing {role}: {candidate.relative_to(root)}")
     state = project_path("current_state", "docs/project/current-state.yaml")
-    if state.exists():
-        text = state.read_text(encoding="utf-8")
-        for key in ("phase:", "next_action:", "gates:"):
-            if key not in text:
+    if state.is_file():
+        data = load_yaml(state)
+        for key in ("phase", "next_action", "gates"):
+            if key not in data:
                 errors.append(f"current-state missing key: {key}")
+    project_manifest = project_path("project", "project.yaml")
+    if project_manifest.is_file():
+        load_yaml(project_manifest)
     board = project_path("task_board", "docs/project/task-board.yaml")
-    board_text = board.read_text(encoding="utf-8") if board.exists() else ""
-    if board.exists() and "tasks:" not in board_text:
-        errors.append("task-board missing tasks:")
-    task_ids = re.findall(r"(?m)^\s*- id:\s*([^\s#]+)", board_text)
-    duplicates = sorted({item for item in task_ids if task_ids.count(item) > 1})
-    errors.extend(f"duplicate task id: {item}" for item in duplicates)
-    known_ids = set(task_ids)
-    for dependency_line in re.findall(r"(?m)^\s*depends_on:\s*\[([^]]*)\]", board_text):
-        for dependency in (x.strip() for x in dependency_line.split(",")):
-            if dependency and dependency not in known_ids:
-                errors.append(f"unknown task dependency: {dependency}")
+    tasks = parse_tasks(board.read_text(encoding="utf-8")) if board.is_file() else []
+    known_ids = {task["id"] for task in tasks}
     valid_statuses = {"READY", "RUNNING", "REVIEW", "BLOCKED", "DONE"}
-    for status in re.findall(r"(?m)^\s*status:\s*([^\s#]+)", board_text):
-        if status not in valid_statuses:
-            errors.append(f"invalid task status: {status}")
+    for task in tasks:
+        status = task.get("status")
+        if not isinstance(status, str) or status not in valid_statuses:
+            errors.append(f"invalid task status: {task['id']}: {status}")
+        dependencies = task.get("depends_on", [])
+        if not isinstance(dependencies, list):
+            errors.append(f"depends_on must be a list: {task['id']}")
+        else:
+            for dependency in dependencies:
+                if not isinstance(dependency, str) or dependency not in known_ids:
+                    errors.append(f"unknown task dependency: {dependency}")
+        if status == "DONE":
+            evidence = task.get("completion_evidence")
+            if (not isinstance(evidence, list) or not evidence or
+                    any(not isinstance(item, str) or not item.strip() or item == "UNBOUND" for item in evidence)):
+                errors.append(f"DONE task needs completion_evidence references: {task['id']}")
     validation_dir = project_path("validation", "docs/validation")
     for path in validation_dir.glob("*.yaml"):
         if path.name.startswith("_") or "template" in path.name:
             continue
-        text = path.read_text(encoding="utf-8")
+        data = load_yaml(path)
         for key in ("evidence_id:", "claim:", "stage:", "verdict:"):
-            if key not in text:
+            if key.rstrip(":") not in data:
                 errors.append(f"evidence missing {key}: {path.relative_to(root)}")
     handoffs_dir = project_path("handoffs", "docs/project/handoffs")
     for path in handoffs_dir.glob("*.yaml"):
         if path.name.startswith("_") or "template" in path.name:
             continue
-        text = path.read_text(encoding="utf-8")
+        data = load_yaml(path)
         for key in ("handoff_id:", "task_id:", "one_next_action:"):
-            if key not in text:
+            if key.rstrip(":") not in data:
                 errors.append(f"handoff missing {key}: {path.relative_to(root)}")
     executions_dir = project_path("executions", "docs/validation/executions")
     for path in executions_dir.glob("*.yaml"):
         if path.name.startswith("_") or "template" in path.name:
             continue
-        text = path.read_text(encoding="utf-8")
+        data = load_yaml(path)
         for key in ("execution_id:", "task_id:", "environment_id:", "source_commit:"):
-            if key not in text:
+            if key.rstrip(":") not in data:
                 errors.append(f"execution missing {key}: {path.relative_to(root)}")
     environment_manifest = project_path("environments", "manifests/environments.yaml")
-    environment_text = environment_manifest.read_text(encoding="utf-8") if environment_manifest.exists() else ""
-    environment_ids = set(re.findall(r"(?m)^\s*- environment_id:\s*([^\s#]+)", environment_text))
+    environment_data = load_yaml(environment_manifest) if environment_manifest.is_file() else {}
+    environments = environment_data.get("environments", [])
+    if not isinstance(environments, list):
+        raise ValueError("environments must be a list")
+    environment_ids = set()
+    for environment in environments:
+        if not isinstance(environment, dict) or not isinstance(environment.get("environment_id"), str):
+            raise ValueError("each environment needs a string environment_id")
+        identity = environment["environment_id"]
+        if identity in environment_ids:
+            errors.append(f"duplicate environment id: {identity}")
+        environment_ids.add(identity)
     execution_ids: set[str] = set()
     for path in executions_dir.glob("*.yaml"):
         if path.name.startswith("_") or "template" in path.name:
             continue
-        text = path.read_text(encoding="utf-8")
-        execution_id = re.search(r"(?m)^execution_id:\s*([^\s#]+)", text)
-        task_id = re.search(r"(?m)^task_id:\s*([^\s#]+)", text)
-        environment_id = re.search(r"(?m)^environment_id:\s*([^\s#]+)", text)
-        if execution_id:
-            if execution_id.group(1) in execution_ids:
-                errors.append(f"duplicate execution id: {execution_id.group(1)}")
-            execution_ids.add(execution_id.group(1))
-        if task_id and task_id.group(1) not in known_ids:
-            errors.append(f"execution references unknown task: {task_id.group(1)}")
-        if environment_id and environment_id.group(1) not in environment_ids:
-            errors.append(f"execution references unknown environment: {environment_id.group(1)}")
+        data = load_yaml(path)
+        execution_id = data.get("execution_id")
+        if not isinstance(execution_id, str):
+            errors.append(f"execution_id must be a string: {path.name}")
+        elif execution_id in execution_ids:
+            errors.append(f"duplicate execution id: {execution_id}")
+        else:
+            execution_ids.add(execution_id)
+        for key, known in (("task_id", known_ids), ("environment_id", environment_ids)):
+            value = data.get(key)
+            if not isinstance(value, str) or value not in known:
+                errors.append(f"execution references unknown {key}: {value}")
     logs_dir = project_path("logs", "logs/topics")
     if logs_dir.name != "topics" and (logs_dir / "topics").is_dir():
         logs_dir = logs_dir / "topics"
@@ -134,4 +152,8 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    try:
+        raise SystemExit(main())
+    except (ValueError, OSError) as exc:
+        print(f"FAIL: {exc}")
+        raise SystemExit(1)

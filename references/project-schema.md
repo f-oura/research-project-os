@@ -71,3 +71,17 @@ Classify records during a staged migration:
 - `legacy`: human-readable but only partially machine-validated.
 
 Do not create a second copy of a `mapped` record. Profile-aware validation may report a `legacy` schema warning without treating it as a reason to rewrite the existing record.
+
+## Machine validation boundaries
+
+YAML is parsed with PyYAML's safe loader and duplicate mapping keys are rejected.
+Tasks must be a list of mappings with unique string IDs and valid statuses.
+`depends_on` accepts flow or block lists and every referenced ID must exist.
+`DONE` requires a non-empty list of non-placeholder `completion_evidence` references.
+This is a structural requirement, not proof of the evidence contents or a scientific
+completion verdict. Existing human review and domain-specific gates still apply.
+
+Profiles are explicit contracts: a requested missing, malformed or empty profile
+fails. Quoted paths and YAML comments are supported. Even a partial profile must
+resolve an existing current state and task board, using defaults for omitted roles.
+Context Pack file resolution rejects traversal and symlinks leaving the project.

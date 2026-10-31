@@ -17,8 +17,8 @@ def main() -> int:
     parser.add_argument('--check', action='store_true', help='read-only dependency and runtime check')
     parser.add_argument('--python', default=sys.executable, help='existing plotting interpreter to check')
     args = parser.parse_args()
-    profile = load_profile(args.profile.resolve()) if args.profile else {}
     try:
+        profile = load_profile(args.profile.resolve()) if args.profile else {}
         if args.check:
             result = inspect(args.path.resolve(), profile, args.python)
         else:

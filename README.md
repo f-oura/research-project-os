@@ -21,6 +21,13 @@ It keeps the project purpose, current state, tasks, decisions, provenance, valid
 
 ## Quick start
 
+Use Python 3.10+ with the declared YAML dependency. Install into your chosen
+virtual environment before running validation or profile/context tools:
+
+```bash
+python3 -m pip install -r requirements.txt
+```
+
 ```bash
 python3 scripts/bootstrap_project.py /path/to/project \\
   --name my-project \\
@@ -103,3 +110,27 @@ change together before using it as a durable project revision. Do not use
 `submodule update --remote` in routine figure production. To adopt a new version,
 review the source, update the gitlink and manifest revision together, and rerun
 the check. Existing calculation and figure provenance conventions still apply.
+
+## Validation and context boundaries
+
+- An explicitly supplied profile must exist and contain a non-empty `canonical`
+  mapping. Missing/invalid profiles fail; they never silently select defaults.
+- Validation parses YAML and rejects duplicate keys, malformed records, duplicate
+  Task IDs and unknown dependencies (both flow and block lists). State and task
+  board remain required with partial profiles. A `DONE` Task must have non-empty,
+  non-`UNBOUND` completion evidence references. `PASS` checks record structure; it
+  does not certify the referenced evidence, scientific claim, or hardware approval.
+- Context sources must resolve within the project, including symlink targets and
+  references inside Tasks. Copying external materials into a pack requires a
+  separately reviewed provenance/access workflow, not a traversal path.
+- Source commit, tool revision, agent policy, full current state, environments,
+  and target Task are mandatory context. Insufficient `--max-chars` or
+  `--max-task-chars` fails without emitting a pack; increase the relevant budget.
+  Optional sections may be omitted with a notice; individual optional excerpts
+  can still be marked `[truncated]`. Consult their canonical records before acting.
+- Task YAML is parsed and serialized; YAML comments are not part of the selected
+  Task record. Put operational constraints in fields or the agent policy.
+  Redaction is best effort, not a guarantee that arbitrary secrets are removed.
+
+Run the regression suite with `python3 -m unittest discover -s tests -v` in the
+same environment. Tests use temporary fixtures and do not contact hardware.

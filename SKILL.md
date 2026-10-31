@@ -21,7 +21,7 @@ Use this skill to make a research project reconstructable by a human or a new AI
 
 ## When starting a project
 
-1. Run `scripts/bootstrap_project.py` to create the standard structure and the pinned custom-plot submodule plus discoverable research-plot skill. A new empty target becomes a Git repository. Use `--without-plotting` only for a records-only scaffold. Check the existing plotting interpreter with `scripts/install_plotting.py PROJECT --check --python PYTHON`; report missing dependencies without installing an environment.
+1. Ensure Python 3.10+ and the dependencies in `requirements.txt` are available in the chosen environment, then run `scripts/bootstrap_project.py` to create the standard structure and the pinned custom-plot submodule plus discoverable research-plot skill. A new empty target becomes a Git repository. Use `--without-plotting` only for a records-only scaffold. Check the existing plotting interpreter with `scripts/install_plotting.py PROJECT --check --python PYTHON`; report missing dependencies without installing an environment.
 2. Fill `docs/project/charter.md` with one decision-changing research or engineering question, competing explanations, observable/discriminator, scope, and completion criteria.
 3. Replace placeholders in `current-state.yaml` and `task-board.yaml`; keep unknown values as `UNBOUND`.
 4. Define dependency-ordered work packages. Every task must have an owner, inputs, output artifact, validation, gate, and failure response.
@@ -40,7 +40,7 @@ Use this skill to make a research project reconstructable by a human or a new AI
 3. Make the smallest reviewable change, run the narrowest applicable validation first, and record expected versus observed behavior.
 4. Update task status, evidence, current state, and handoff in the same change when the project state changes.
 5. Run `scripts/validate_project.py` before reporting completion. If context is needed for an agent, generate a purpose-limited pack with `scripts/context_pack.py`.
-6. Context packs fail closed for unknown Task IDs and record their source project commit and Project OS tool revision.
+6. Context packs fail closed for unknown Task IDs, invalid profiles, out-of-project references, and insufficient mandatory-context budgets. They retain the full Task, current state, agent policy, environments, source project commit, and tool revision. Optional excerpts may be omitted or marked truncated; consult canonical records before acting. Redaction is best effort.
 
 ## References
 
