@@ -25,3 +25,16 @@ At session end, record:
 - execution environment, tool versions, and source commit when work ran outside the controller's checkout;
 
 Do not claim hardware or production validation from simulation/build results. Do not access an unrelated board, port, dataset, or external account merely because it is visible in the environment.
+
+## Meaningful checkpoints
+
+Apply [the reporting policy](reporting-policy.md) at results, changes of conditions,
+failures and interruptions. Use `templates/study-log.md` or equivalent topic records;
+link execution details instead of duplicating them. Commit a coherent change with
+its records and checks, or record the concrete reason a checkpoint cannot be made.
+Report unrun checks and remaining changes explicitly. Commit and push are distinct.
+
+At handoff, review figure captions/conditions, study records and first-use term
+definitions. A reader with relevant master's-level fundamentals should be able to
+follow the reasoning without prior project knowledge. Content review complements
+structural validation; it is not certified by a validator's PASS result.

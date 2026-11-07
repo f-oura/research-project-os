@@ -65,7 +65,7 @@ def main() -> int:
     project_id = slug(args.name)
     files = {
         "project.yaml": f"schema_version: 1\nproject_id: {project_id}\ntitle: {args.title}\nkind: {args.kind}\nowner: {args.owner}\ncreated: {today}\nphase: PLANNING\nstatus: ACTIVE\n",
-        "README.md": f"# {args.title}\n\nProject ID: `{project_id}`\n\nStart here:\n\n- [charter](docs/project/charter.md)\n- [current state](docs/project/current-state.yaml)\n- [task board](docs/project/task-board.yaml)\n- [provenance](docs/provenance/README.md)\n- [validation](docs/validation/README.md)\n- [topic logs](logs/README.md)\n\nUnknown values remain `UNBOUND` until bound to evidence or a human decision.\n",
+        "README.md": f"# {args.title}\n\nProject ID: `{project_id}`\n\nStart here:\n\n- [charter](docs/project/charter.md)\n- [current state](docs/project/current-state.yaml)\n- [task board](docs/project/task-board.yaml)\n- [provenance](docs/provenance/README.md)\n- [validation](docs/validation/README.md)\n- [results and figures](docs/validation/results-index.md)\n- [topic logs](logs/README.md)\n\nUnknown values remain `UNBOUND` until bound to evidence or a human decision.\n",
         "docs/project/charter.md": f"# Project charter\n\n- Project: `{project_id}`\n- Created: {today}\n- Status: draft\n\n## Primary question\n\nWhat decision-changing question will this project answer?\n\n## Claim and competing explanations\n\n- Target claim: UNBOUND\n- Null or competing explanation: UNBOUND\n- Discriminator/observable: UNBOUND\n\n## Scope\n\n- In scope: UNBOUND\n- Out of scope: UNBOUND\n\n## Completion\n\n- Minimum defensible completion: UNBOUND\n- Strong completion: UNBOUND\n- Stop/pivot criteria: UNBOUND\n",
         "docs/project/current-state.yaml": f"schema_version: 1\nupdated: {today}\nproject: {project_id}\nphase: PLANNING\nnext_action: Fill the charter and bind the first task to evidence.\nlast_validated_commit: UNBOUND\ngates:\n  external_inputs: UNBOUND\n  human_approval: NOT_REQUIRED_YET\n  release: NOT_READY\n",
         "docs/project/task-board.yaml": "schema_version: 1\nupdated: UNBOUND\nstatuses: [READY, RUNNING, REVIEW, BLOCKED, DONE]\ntasks:\n  - id: PLAN-001\n    title: Define the project charter and first evidence gate\n    owner_role: owner\n    status: READY\n    depends_on: []\n    scope:\n      in: [research question, competing explanation, first validation]\n      out: [unapproved implementation]\n    completion_evidence: [docs/project/charter.md, docs/project/current-state.yaml]\n    human_approval_required: false\n",
@@ -95,6 +95,11 @@ def main() -> int:
     copy_template(root, skill_root, "failure.md", "logs/topics/failure-template.md")
     copy_template(root, skill_root, "environment.yaml", "docs/coordination/nodes/_template.yaml")
     copy_template(root, skill_root, "execution.yaml", "docs/validation/executions/_template.yaml")
+    copy_template(root, skill_root, "figure.md", "docs/validation/figure-template.md")
+    copy_template(root, skill_root, "results-index.md", "docs/validation/results-index.md")
+    copy_template(root, skill_root, "study-log.md", "logs/topics/study-template.md")
+    write_new(root, "docs/project/reporting-policy.md",
+              (skill_root / "references/reporting-policy.md").read_text(encoding="utf-8"))
     if revision:
         try:
             result = install(integration_root, revision)

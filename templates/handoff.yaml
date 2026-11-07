@@ -13,3 +13,16 @@ open_questions: []
 approval_needed: []
 acceptance_criteria: []
 one_next_action: UNBOUND
+# Reference source commits; discover this handoff's own commit through Git history.
+study_log_refs: []
+figure_record_refs: []
+term_definitions: {}
+checkpoint:
+  status: UNBOUND
+  commits: []
+  remaining_changes: []
+  validation_not_run: []
+  not_committed_reason: UNBOUND
+  push_status: UNBOUND
+results_index_ref: docs/validation/results-index.md
+reproduction_gaps: []

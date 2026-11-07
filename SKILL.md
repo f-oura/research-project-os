@@ -19,6 +19,18 @@ Use this skill to make a research project reconstructable by a human or a new AI
 - Require explicit human approval before hardware programming, live experiment control, external transmission, publication, or irreversible changes.
 - Treat remote servers as execution nodes, not separate project truths. Record node role, capabilities, restrictions, source commit, and tool versions.
 
+## Common reporting requirements
+
+Follow [reporting-policy.md](references/reporting-policy.md): deliver figures with
+reading guidance and creation/reproduction conditions; record meaningful study and
+work checkpoints and commit coherent changes; explain results for a master's-level
+reader new to the project, defining unfamiliar terms, abbreviations and symbols.
+Record the information necessary and sufficient to reproduce calculations and figures
+from their inputs. Link question/Task, study, execution, evidence and artifacts by
+IDs and paths, with a results index reachable from the project entrypoint. Distinguish
+a documented recipe from a verified rerun. Review these items and commit/validation
+status before reporting completion.
+
 ## When starting a project
 
 1. Ensure Python 3.10+ and the dependencies in `requirements.txt` are available in the chosen environment, then run `scripts/bootstrap_project.py` to create the standard structure and the pinned custom-plot submodule plus discoverable research-plot skill. A new empty target becomes a Git repository. Use `--without-plotting` only for a records-only scaffold. Check the existing plotting interpreter with `scripts/install_plotting.py PROJECT --check --python PYTHON`; report missing dependencies without installing an environment.

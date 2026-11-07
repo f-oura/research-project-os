@@ -134,3 +134,24 @@ the check. Existing calculation and figure provenance conventions still apply.
 
 Run the regression suite with `python3 -m unittest discover -s tests -v` in the
 same environment. Tests use temporary fixtures and do not contact hardware.
+
+## Common reporting policy
+
+[The reporting policy](references/reporting-policy.md) requires figures with reading
+guidance and creation conditions, records and commits at meaningful checkpoints,
+and explanations understandable to a master's-level reader new to the project.
+Define unfamiliar terms, abbreviations and symbols at first use.
+
+Bootstrap includes a local policy copy, a figure record template and a study log
+template, linked from the generated agent instructions. Handoff and evidence
+records also provide explanatory and checkpoint fields. Re-running bootstrap
+preserves existing files; existing projects adopt these additions through a reviewed
+change, keeping established record paths and repository Git rules. Update local
+policy copies explicitly when adopting a newer Project OS revision.
+
+Calculations and figures must have the information necessary and sufficient for
+reproduction from inputs. The generated `docs/validation/results-index.md`, linked
+from the project README, connects question/Task context, studies, executions,
+evidence and artifacts. Existing projects may keep an equivalent index at their
+established entrypoint. Procedure documentation and verified reproduction are
+separate states; unresolved prerequisites remain explicit.

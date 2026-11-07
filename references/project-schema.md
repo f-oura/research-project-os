@@ -85,3 +85,21 @@ Profiles are explicit contracts: a requested missing, malformed or empty profile
 fails. Quoted paths and YAML comments are supported. Even a partial profile must
 resolve an existing current state and task board, using defaults for omitted roles.
 Context Pack file resolution rejects traversal and symlinks leaving the project.
+
+## Reporting records
+
+[Reporting policy](reporting-policy.md) defines figure explanation/provenance,
+meaningful work records and commits, and master's-level explanations with defined
+terms. New scaffolds include `docs/project/reporting-policy.md`,
+`docs/validation/figure-template.md` and `logs/topics/study-template.md`.
+Figure records may reuse Artifact/Evidence/Execution references. Existing projects
+can use equivalent records at established paths; no bulk migration is required.
+New explanatory fields are additive; old records remain valid. Readability and
+scientific interpretation require content review rather than string checks.
+
+Calculations and figures must have the information necessary and sufficient for
+reproduction from inputs. The generated `docs/validation/results-index.md`, linked
+from the project README, connects question/Task context, studies, executions,
+evidence and artifacts. Existing projects may keep an equivalent index at their
+established entrypoint. Procedure documentation and verified reproduction are
+separate states; unresolved prerequisites remain explicit.

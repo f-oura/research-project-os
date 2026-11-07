@@ -8,3 +8,15 @@ tool_versions: {}
 target_identity: {}
 evidence_refs: []
 limitations: []
+# For figures, link the caption/reading guide and creation conditions record.
+figure_record_ref: UNBOUND
+context_refs: []
+execution_refs: []
+source_artifact_refs: []
+results_index_ref: docs/validation/results-index.md
+reproduction:
+  status: incomplete
+  procedure_ref: UNBOUND
+  comparison_ref: UNBOUND
+  verification_evidence_refs: []
+  missing_prerequisites: []

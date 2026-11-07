@@ -11,3 +11,14 @@ outputs: []
 validation_refs: []
 status: planned
 notes: UNBOUND
+# Link a complete input-to-output procedure; do not duplicate canonical records.
+context_refs: []
+configuration_ref: UNBOUND
+source_patch_ref: UNBOUND
+ordered_reproduction_steps_ref: UNBOUND
+manual_transformations: []
+seeds_and_stochastic_settings: UNBOUND
+output_artifact_refs: []
+comparison_and_tolerance_ref: UNBOUND
+reproduction_status: incomplete
+reproduction_evidence_refs: []

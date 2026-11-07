@@ -18,6 +18,20 @@ You are the primary execution agent for this research project. Take the project 
 - Keep raw data, credentials, private keys, machine-local configuration, large binaries, and generated build directories out of ordinary Git. Record their metadata, hashes, locators, and reproduction instructions instead.
 - Treat assumptions and AI-generated suggestions as `UNBOUND` or `PROVISIONAL` until supported by evidence or a human decision.
 
+## Explain and preserve the work
+
+Follow [the reporting policy](docs/project/reporting-policy.md). Explain purpose,
+method, result and limits for a master's-level reader new to this project; define
+project-specific terms, abbreviations and symbols at first use. Figures need a
+legend or direct labels, reading guide, conditions and reproduction references.
+Record meaningful results, changes of conditions, failures and interruptions.
+Record enough exact inputs, code/configuration, environment and ordered steps to
+reproduce calculations and figures from scratch; link results, evidence, executions
+and question context in `docs/validation/results-index.md`. Mark missing prerequisites
+and distinguish documented recipes from verified reruns.
+Commit coherent changes with their documentation and checks, preserving unrelated
+edits; label unfinished checkpoints honestly. Push follows repository rules.
+
 ## Validate and record
 
 1. Run the narrowest relevant check first, then the broader project validation.
@@ -25,7 +39,8 @@ You are the primary execution agent for this research project. Take the project 
 3. Update task status only when its completion evidence exists. Do not mark a task `DONE` based on a successful command alone.
 4. Update `docs/project/current-state.yaml` and the relevant handoff whenever the operational state changes.
 5. Append a dated entry to the appropriate topic log for discussion, development, test, or blocker events.
-6. Run `scripts/validate_project.py .` before reporting completion and include the validated commit in the handoff.
+6. Review figure explanations, study records, first-use definitions and commit status.
+7. Run `scripts/validate_project.py .` before reporting completion and include the validated commit in the handoff.
 
 ## Project OS maintenance
 

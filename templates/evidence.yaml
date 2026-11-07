@@ -12,3 +12,13 @@ limitations: []
 review_state: draft
 reviewed_by: UNBOUND
 created: YYYY-MM-DD
+# Explain for a master's-level reader unfamiliar with this project.
+question_and_method_rationale: UNBOUND
+conditions_ref: UNBOUND
+interpretation: UNBOUND
+term_definitions: {}
+figure_record_refs: []
+context_refs: []
+execution_refs: []
+results_index_ref: docs/validation/results-index.md
+reproduction_assessment: UNBOUND
