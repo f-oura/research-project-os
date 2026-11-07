@@ -66,11 +66,14 @@ scientific interpretation, or evidence quality; these need a content review.
 
 ## Reproduce from inputs and find the evidence
 
-A completed calculation or figure must have enough recorded information for another
-person to reproduce it from the original inputs, without relying on chat memory,
-unstated local settings or unexplained manual steps. Keep the information necessary
-and sufficient for that result; reference existing canonical records rather than
-copying everything into every log.
+For every figure and calculation result, retain the information necessary and
+sufficient to reproduce it from scratch, starting from the original inputs.
+This applies to exploratory, intermediate, failed and final results, not only
+publication-ready outputs. Record the required information as the work proceeds;
+do not rely on chat memory, unstated local settings or unexplained manual steps.
+Reference existing canonical records rather than copying everything into every log.
+A result with missing reproduction prerequisites remains incomplete and must not
+be reported as a completed, reproducible deliverable.
 
 Bind the exact input versions/hashes and access/availability, code revision plus any
 uncommitted patch, dependencies/tool versions, environment, configuration, units and
